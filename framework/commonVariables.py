@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Author: nick serra <nserra@riis.com>
+Author: grimmvenom <grimmvenom@gmail.com>
 =====================================================
 # Common Variables for Testing
 =====================================================

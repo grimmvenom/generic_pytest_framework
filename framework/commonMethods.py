@@ -22,7 +22,7 @@ import configparser
 
 
 """
-Author: nick serra <nserra@riis.com>
+Author: grimmvenom <grimmvenom@gmail.com>
 =====================================================
 # Common Methods for Testing
 =====================================================

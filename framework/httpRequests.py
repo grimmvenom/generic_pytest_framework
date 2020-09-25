@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Author: nick serra <nserra@riis.com>
+Author: grimmvenom <grimmvenom@gmail.com>
 
 Summary:
     Common API / HTTP request methods

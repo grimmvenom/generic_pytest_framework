@@ -3,7 +3,7 @@
 
 
 """
-Author: nick serra <nserra@riis.com>
+Author: grimmvenom <grimmvenom@gmail.com>
 
 Summary:
     To perform various database queries based on input of config.ini file
