@@ -31,7 +31,7 @@ import logging
 import allure_pytest
 
 # Global Variables
-directories = ["logs", "logs" + os.sep + "pytest_results",  "logs" + os.sep + "allure_results"]
+
 current_dir = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 date = time.strftime("%m-%d-%Y") # Date Format mm-dd-yyyy_Hour_Min
@@ -39,14 +39,17 @@ Time = time.strftime("%H_%M") # Time
 report_time = time.strftime("%I_%M_%p")
 sys_time = time.strftime("%I_%M_%p")
 
+
+
 http_success_codes = [200, 201, 202, 301, 302]
 
 LOGGER = logging.getLogger(__name__)
 
+directories = ["logs", f"logs{os.sep}pytest_results", f"logs{os.sep}allure_results"]
 # Setup / Configuration of local directories
 for directory in directories:
-	if not os.path.exists(current_dir + os.sep + directory):
-		os.makedirs(current_dir + os.sep + directory)
+	if not os.path.exists(f"{current_dir}{os.sep}{directory}"):
+		os.makedirs(f"{current_dir}{os.sep}{directory}")
 
 """
 =====================================================
@@ -90,7 +93,11 @@ def http_get_request_json(method, url):
 def http_post_request_json(method, url, data):
 	print("\nPOSTing to URL: ", url)
 	results = requests.post(url, data=data)
-	content = results.json()
+	try:
+		content = results.json()
+	except Exception as e:
+		print(f"Error http_post_request_json: {e}")
+		content = results.content
 	status_code = results.status_code
 	headers = results.headers
 	LOGGER.info(method + ":http_post_request_json: POSTing Data: " + str(url) + " Status Code: " + str(status_code))

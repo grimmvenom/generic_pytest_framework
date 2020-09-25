@@ -14,8 +14,8 @@ import time
 # Global Variables
 current_dir = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-date = time.strftime("%m-%d-%Y") # Date Format mm-dd-yyyy_Hour_Min
-Time = time.strftime("%H_%M") # Time
+date = time.strftime("%m-%d-%Y")  # Date Format mm-dd-yyyy_Hour_Min
+Time = time.strftime("%H_%M")  # Time
 report_time = time.strftime("%I_%M_%p")
 sys_time = time.strftime("%I_%M_%p")
 
