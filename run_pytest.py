@@ -32,7 +32,7 @@ both_args = html_args + allure_args
 
 # os.system("py.test" + str(html_args) + " -vs ./Generic/")  # Run html reporting
 # os.system("py.test" + str(allure_args) + " -vs ./Generic/")  # Run Allure reporting
-os.system("py.test" + str(both_args) + " -vs ./Generic/")  # Run html and allure reporting
+os.system("py.test" + str(both_args) + " -vs ./suites/Generic/")  # Run html and allure reporting
 os.rename(log_path, new_log_path)  # Rename log output w/ unique name
 
 
