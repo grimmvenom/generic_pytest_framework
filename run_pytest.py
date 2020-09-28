@@ -19,20 +19,26 @@ Time = time.strftime("%H_%M")  # Time
 report_time = time.strftime("%I_%M_%p")
 sys_time = time.strftime("%I_%M_%p")
 
-log_path = current_dir + os.sep + "logs" + os.sep + "pytest_results" + os.sep + "pytest.log"
-new_log_path = current_dir + os.sep + "logs" + os.sep + "pytest_results" + os.sep + "pytest-" + str(date) + "_" + str(report_time) + ".log"
+log_path = f"{current_dir}{os.sep}logs{os.sep}pytest_results{os.sep}pytest.log"
+new_log_path = f"{current_dir}{os.sep}logs{os.sep}pytest_results{os.sep}pytest-{date}_{report_time}.log"
 
-html_output = current_dir + os.sep + 'logs' + os.sep + 'pytest_results' + os.sep + date + '-' + Time + '-pytest_suite.html'
-html_args = " --html=" + str(html_output) + " --self-contained-html"
+html_output = f"{current_dir}{os.sep}logs{os.sep}pytest_results{os.sep}{date}-{Time}-pytest_suite.html"
+html_args = f" --html={html_output} --self-contained-html"
 
-allure_dir = current_dir + os.sep + 'logs' + os.sep + 'allure_results'
-allure_args = " --alluredir=" + str(allure_dir) + " --clean-alluredir"
+allure_dir = f"{current_dir}{os.sep}logs{os.sep}allure_results"
+allure_args = f" --alluredir={allure_dir} --clean-alluredir"
 
 both_args = html_args + allure_args
 
 # os.system("py.test" + str(html_args) + " -vs ./Generic/")  # Run html reporting
 # os.system("py.test" + str(allure_args) + " -vs ./Generic/")  # Run Allure reporting
-os.system("py.test" + str(both_args) + " -vs ./suites/Generic/")  # Run html and allure reporting
+# os.system("py.test" + str(both_args) + " -vs ./Generic/")  # Run html and allure reporting
+
+os.system("py.test" + str(both_args) + " -vs ./framework/tests/API/")  # Run html and allure reporting
+# os.system("py.test" + str(allure_args) + " -vs ./framework/tests/API/")
+
+
+# os.system("py.test" + str(both_args) + " -vs ./tests/Test/")  # Run html and allure reporting
 os.rename(log_path, new_log_path)  # Rename log output w/ unique name
 
 

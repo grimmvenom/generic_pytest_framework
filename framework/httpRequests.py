@@ -41,7 +41,7 @@ class ApiRequest:
             string = string + ", headers=self.headers"
         
         results = eval("requests." + str(self.method.lower()) + "(" + string + ")")
-        LOGGER.info(f"Status Code: {results.status_code}, Content: {results.content}")
+        # LOGGER.info(f"Performing {self.method.upper()} request -> Status Code: {results.status_code}, Content: {results.content}")
         if len(results.text) >= 1:
             try:
                 content = results.json()
@@ -56,7 +56,7 @@ class ApiRequest:
                     LOGGER.error(f"APIRequests content ({results.content}) to text ERROR: {e}")
         else:
             content = dict()
-        status_code = str(results.status_code)
+        status_code = results.status_code
         response_headers = results.headers
         
         end_time = time.time() - request_start_time
@@ -73,10 +73,10 @@ class ApiRequest:
                        "execution_time": f"{duration} min"}
         
         if int(status_code) in http_success_codes:
-            LOGGER.info(f"httpRequests.py:ApiRequests:perform_request: {self.method.upper()}: SUCCESS:: {self.url} -> Status Code: {status_code}")
-            LOGGER.info(result_data)
+            LOGGER.info(f"httpRequests.py:ApiRequests:perform_request: {self.method.upper()}: SUCCESS:: {self.url} -> Status Code: {status_code}, Content: {results.content}\n")
+            # LOGGER.info(result_data)
         else:
-            LOGGER.warn(f"httpRequests.py:ApiRequests:perform_request: {self.method.upper()}: WARNING:: {result_data}")
+            LOGGER.warn(f"httpRequests.py:ApiRequests:perform_request: {self.method.upper()}: WARNING:: {self.url} -> Status Code: {status_code}, Content: {results.content}\n")
         return result_data
 
 
@@ -89,7 +89,7 @@ class RequestSession:
         self.json_payload = json_payload
         self.headers = headers
         self.redirect_limit = 5
-    
+
     def session_response(self):
         request_start_time = time.time()
         
@@ -149,12 +149,12 @@ class RequestSession:
         else:
             return dict(response_data)
 
-    
+
 class StageRequests:
     def __init__(self):
         self.staged_requests = dict()
         self.completed_requests = dict()
-    
+
     def stage_request(self, context):
         for row in context.table:
             row_data = {"URL": row["URL"],
@@ -177,7 +177,7 @@ class StageRequests:
             LOGGER.info("httpRequests.py:StageRequests:stage_request: staging:: " + str(row_data))
             index = len(self.staged_requests.keys()) + 1
             self.staged_requests[str(index)] = row_data
-    
+
     def http_request_json(self, requirements):
         url = requirements["URL"]
         method = requirements["Method"]

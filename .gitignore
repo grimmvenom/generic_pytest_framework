@@ -1,4 +1,5 @@
 logs/
 .pytest_cache/
 __pycache__/
-suites/Generic/__pycache__/
+framework/suites/Generic/__pycache__/
+.DS_Store/

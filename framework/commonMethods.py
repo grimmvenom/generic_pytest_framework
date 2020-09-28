@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from framework.commonVariables import *
+
 import requests
 import re
 import urllib
@@ -19,6 +19,8 @@ import allure_commons
 from behave import *
 import uuid
 import configparser
+import pytest
+from framework.commonVariables import *
 
 
 """
@@ -28,46 +30,6 @@ Author: grimmvenom <grimmvenom@gmail.com>
 =====================================================
 
 """
-
-
-# context.config.userdata
-class testConfig:
-    def __init__(self):
-        self.userdata = dict()
-
-
-class emptyContext:
-    def __init__(self):
-        self.config = testConfig()
-        self.config.userdata['variables'] = dict()
-
-
-def setup_fake_context(environment, environment_config_path, browser, remote=False):
-    print(f"environment config path: {environment_config_path}")
-    environment = environment.lower()
-    browser = browser.capitalize()
-    
-    config = configparser.RawConfigParser()
-    config.read(environment_config_path)
-    
-    context = emptyContext()  # Setup empty context (Fake w/o using behave)
-    # print(f"Context: {context.config.userdata}")
-    context.config.userdata['browser'] = browser
-    context.config.userdata['environment'] = environment
-    context.config.userdata['environment_config_path'] = environment_config_path
-    
-    for key, value in config[environment].items():
-        try:
-            context.config.userdata['variables'][str(key)] = str(value)
-        except:
-            print(f"Error parsing key ({key})")
-            pass
-    
-    if remote:
-        print("Fake Context Remote Selenium Set")
-        context.config.userdata['selenium_remote_url'] = context.config.userdata['variables']['selenium_remote_url']
-    # print(f"Context: {context.config.userdata}\n\n")
-    return context
 
 
 def get_network_interfaces():
@@ -85,8 +47,8 @@ def get_ip_addresses():
         except:
             pass
     return ip_addresses
-    
-    
+
+
 def diff_lists(list1, list2):
     list_dif = [i for i in list1 + list2 if i not in list1 or i not in list2]
     return list_dif
@@ -110,71 +72,6 @@ def schema_comparison(schema, input):
         LOGGER.error(f"Schema Error: {e}")
         return e
     
-    
-def context_variable_add(context, key, value):
-    log_label = 'commonMethods.py:context_variable_add:: '
-    LOGGER.info(log_label + f'Adding context variable {key} with value {value}')
-    var_collection = context.config.userdata['variables']
-    var_collection[key] = value
-
-
-def context_variable_get(context, key):
-    log_label = 'commonMethods.py:context_variable_get:: '
-    LOGGER.info(log_label + f'Getting context variable {key}')
-    var_collection = context.config.userdata['variables'][key]
-    return var_collection
-
-
-def context_variable_replacement(context, input, root_key=None):
-    if root_key:
-        root_key = root_key.lstrip('<')
-        root_key = root_key.rstrip('>')
-
-    log_label = 'commonMethods.py:context_variable_replacement:: '
-
-    result = str(input)
-    # LOGGER.info(f"{log_label} Checking input: {result}")
-    if ('<' and '>' in str(input)) or ('{{' and '}}' in str(input)):
-        if 'variables' in context.config.userdata.keys():
-            if root_key:
-                for key, value in context.config.userdata['variables'][root_key].items():
-                    if isinstance(value, dict):
-                        value = json.dumps(value)
-                    #  LOGGER.info(f"Checking variable with root_key {root_key}: {key}")
-                    try:
-                        if '<' + str(key) + '>' in str(input):
-                            result = result.replace('<' + str(key) + '>', str(value))
-                            LOGGER.info('<' + str(key) + "> replaced with " + str(value))
-                        elif '{{' + str(key) + '}}' in str(input):
-                            result = result.replace('{{' + str(key) + '}}', str(value))
-                            LOGGER.info('{{' + str(key) + "}} replaced with " + str(value))
-                    except Exception as e:
-                        LOGGER.error("Issue on Key (" + str(key) + ") -> " + str(e))
-                        continue
-            else:
-                for key, value in context.config.userdata['variables'].items():
-                    # LOGGER.info(f"Replace value: {value} Type: {type(value)}")
-                    try:
-                        if isinstance(value, dict):
-                            value = json.dumps(value)
-                    except Exception as err:
-                        LOGGER.error(f"Value does not appear to be JSON ready: {err}")
-
-                    # LOGGER.info(f"Checking variable with root_key {root_key}: {key}")
-                    try:
-                        if '<' + str(key) + '>' in str(input):
-                            result = result.replace('<' + str(key) + '>', str(value))
-                            LOGGER.info('<' + str(key) + "> replaced with " + str(value))
-                        elif '{{' + str(key) + '}}' in str(input):
-                            result = result.replace('{{' + str(key) + '}}', str(value))
-                            LOGGER.info('{{' + str(key) + "}} replaced with " + str(value))
-                    except Exception as e:
-                        print("Error on Key: " + str(key))
-                        print(e)
-                        LOGGER.error("Issue on Key (" + str(key) + ") -> " + str(e))
-                        continue
-    return result
-
 
 def db_load_from_file(self, path):
     try:
@@ -300,25 +197,3 @@ def verify_key_value_no_spaces(method, content, key):
             LOGGER.info(f"{entry[key]}: Contains Spaces")
             LOGGER.error(f"{method}:verify_key_value_no_spaces: FAILURE: index({index}) Value does contain spaces")
             assert False, f"{method}:verify_key_value_no_spaces: FAILURE: index({index}) Value does contain spaces"
-
-
-def environment_check(context, log_label):
-    if "environment" in context.config.userdata.keys():
-        environment = context.config.userdata["environment"]
-    else:
-        LOGGER.error(f"{log_label} FAILURE: environment was not set")
-        assert False, f"environment was not set"
-        
-    if "environment_config_path" in context.config.userdata.keys():
-        environment_config_path = context.config.userdata["environment_config_path"]
-    else:
-        LOGGER.error(f"{log_label} FAILURE: Testing environment configuration file not specified")
-        assert False, f"Testing environment configuration file not specified"
-        
-    if "browser" in context.config.userdata.keys():
-        browser = context.config.userdata["browser"]
-    else:
-        LOGGER.error(f"{log_label} FAILURE: browser context was not set")
-        assert False, f"browser context was not set"
-        
-    return environment, environment_config_path, browser
