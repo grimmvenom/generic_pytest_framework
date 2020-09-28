@@ -12,7 +12,7 @@ TestCase = os.path.basename(__file__)
 
 
 # Test GET Responses
-class Test_get_requests:
+class Test_generic_api_tests:
     
     def test_get_network(self):
         interfaces = get_network_interfaces()
