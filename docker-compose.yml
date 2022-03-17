@@ -1,0 +1,50 @@
+# To execute this docker-compose yml file use `docker-compose -f <file_name> up`
+# or be in same directory as docker-compose.yml (default runs the same filename)
+#
+# Run both containers independently w/o docker-compose:
+# docker run -d -p 0.0.0.0:4444:4444 -p 0.0.0.0:5900:5900 -v /dev/shm:/dev/shm --name selenium selenium/standalone-chrome-debug:latest
+# docker run -p 0.0.0.0:8675:8675 -it --entrypoint zsh --link selenium:selenium -v $(pwd):/pytest_framework pytest_framework:latest
+# docker run -it --entrypoint zsh pytest_framework:latest
+#
+# run with docker-compose:
+# Start services detached (in background):
+#   docker-compose up -d
+# Run pytest_framework container in interactive mode:
+#   docker-compose exec pytest_framework zsh
+
+version: "3"
+
+services:
+  selenium_service:
+    image: selenium/standalone-chrome-debug:latest
+    container_name: selenium-chrome
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      custom_network:
+        aliases:
+          - selenium
+
+  pytest_framework:
+    image: pytest_framework:latest
+    container_name: pytest_framework
+    depends_on:
+      - selenium_service
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - "8675:8675"
+    volumes:
+      - ./:/pytest_framework
+    networks:
+      - custom_network
+    environment:
+        - TZ=America/New_York
+
+networks:
+  custom_network:
+    driver: "bridge"
+
