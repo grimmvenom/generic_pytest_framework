@@ -83,16 +83,25 @@ class Trigger_Functional_Tests:
 
 
     def teardown(self):
-        os.system(f"allure generate {allure_dir} --clean -o {log_dir}{os.sep}report")
-        os.system(f"allure open -p 8675 {log_dir}{os.sep}report")
+        print(f"Output Type: {self.arguments.output_type}")
+        if self.arguments.output_type == "allure" or self.arguments.output_type == "both":
+            os.system(f"allure generate {allure_dir} --clean -o {log_dir}{os.sep}report")
+            os.system(f"allure open -p 8675 {log_dir}{os.sep}report")
 
-        pycache_paths = ['__pyache__/', './testSuites/__pycache__/', f"./testSuites/{self.project}_tests/__pycache__/"]
-        for path in pycache_paths:
-            try:
-                shutil.rmtree(path)  # Cleanup pycache
-            except Exception as e:
-                pass
-            
+        cleanup_paths = ['__pyache__/', 
+            './testSuites/__pycache__/', 
+            f"./testSuites/{self.project}_tests/__pycache__/", 
+            "geckodriver.log",
+        ]
+        for path in cleanup_paths:
+            if os.path.isfile(path):
+                os.remove(path)
+            elif os.path.isdir(path):
+                try:
+                    shutil.rmtree(path)  # Cleanup pycache
+                except Exception as e:
+                    pass
+                
 
 if __name__ == "__main__":
     arguments = get_arguments()

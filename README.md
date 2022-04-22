@@ -9,6 +9,21 @@
 
 <br>
 
+## To add new tests
+- copy testSuites/template -> testSuites/{whatever}_tests
+- copy rename test_example.py -> test_{scenario}.py
+- if adding a new project, update project_choices variable in run_functional_tests.py
+- Things to keep in mind:
+    - config.ini defines environments and variables for that environment
+    - conftest.py within the testSuite defines what happens before any of the tests are executed
+    - test suites need to be named test_{whatever}.py
+    - test steps also must contain test_{whatever}
+    - helper methods can be defined and do not need test_ naming convention in method name
+    - you can import some common methods defined under pytest_framework/framework/modules
+    - If something doesn't exist yet, we can build it or import more packages from pip
+
+<br>
+
 ## To Run Demo Tests
 <hr>
 
@@ -54,3 +69,7 @@ Share folder with host (execute from pytest_framework parent directory:)
 ```
 docker run -p 0.0.0.0:8675:8675 -it --entrypoint /usr/bin/fish --link selenium:selenium -v $(pwd):/pytest_framework pytest-framework:latest
 ```
+
+<br>
+
+## [Selenium](https://selenium-python.readthedocs.io/)

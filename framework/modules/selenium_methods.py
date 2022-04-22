@@ -9,13 +9,39 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options
+from soupsieve import select
 from framework.modules.commonVariables import *
 import pytest
 # from framework.modules.commonMethods import *
 
+supported_browsers = ['firefox', 'chrome', 'remote', 'headless', 'safari']
+
 chrome_path_windows = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
 chrome_path_linux = "/usr/bin/google-chrome"
 chrome_path_mac = "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"  
+
+
+def pytest_determine_browser():
+    if "browser" in pytest.variables.keys():
+        print(f"Browser Specified: {pytest.variables['browser']}")
+        selected_browser = pytest.variables['browser'].lower()
+        if selected_browser not in supported_browsers:
+            LOGGER.error(f"selected browser ({selected_browser}) not supported, please use: ({supported_browsers})")
+        elif selected_browser == 'firefox':
+            driver = setup_firefox_browser()
+        elif selected_browser == 'chrome':
+            driver = setup_chrome_browser()
+        elif selected_browser == 'headless':
+            driver = setup_chrome_headless()
+        elif selected_browser == 'remote':
+            open_chrome_browser_remote_debugger("https://www.duckduckgo.com")
+            driver = setup_chrome_browser_remote_debugger()
+        elif selected_browser == 'safari':
+            driver = setup_safari_browser()
+        return driver
+    else:
+        LOGGER.error("browser not specified in config.ini")
+        return None
 
 
 def determine_chrome_path():
@@ -66,6 +92,12 @@ def setup_chrome_headless():
 def setup_firefox_browser():
     driver = webdriver.Firefox(desired_capabilities=DesiredCapabilities.FIREFOX)
     LOGGER.info(f"Starting Selenium using Firefox")
+    return driver
+
+
+def setup_safari_browser():
+    driver = webdriver.Safari(desired_capabilities=DesiredCapabilities.SAFARI)
+    LOGGER.info(f"Starting Selenium using Safari")
     return driver
 
 

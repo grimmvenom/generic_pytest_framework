@@ -16,5 +16,10 @@ python -m pip install -r requirements.txt
 Example: chromedriver --version or chromedriver.exe --version
 ````
 
+<br>
 
-
+## Selenium Web Driver Setup
+To leverage Selenium locally, it is important to download the right browser drivers that support the version of the web browser you are using. Safari and Edge are supported by default
+- [Chromedriver](https://sites.google.com/chromium.org/driver/downloads)
+- [Geckodriver (Mozilla)](https://github.com/mozilla/geckodriver/releases/)
+- [Edge WebDriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/)
