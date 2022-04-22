@@ -37,3 +37,5 @@ for key, value in config[env].items():
             pytest.variables[str(key)] = str(value)
         except:
             pass
+
+

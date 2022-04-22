@@ -1,4 +1,6 @@
 logs
+config.ini
 framework/dependencies
 .DS_Store
 __pycache__
+geckodriver.log
