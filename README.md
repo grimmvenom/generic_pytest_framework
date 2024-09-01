@@ -6,20 +6,21 @@
 - python3+
 - python3+ pip
 - [allure](https://docs.qameta.io/allure/)
+- Selenium (optional)
 
 <br>
 
 ## Getting Started
-- [Framework Setup](./framework/Docs/Framework_Setup.md)
-- copy example_config.ini to config.ini
+- [Framework Setup Instructions](./framework/Docs/Framework_Setup.md)
 - add any necessary environments & variables you wish to use to config.ini
 
 <br>
 
-## Other Documentation
-- [Selenium](https://selenium-python.readthedocs.io/)
+## Other helpful Documentation
 - [Docker Cheatsheet](./framework/Docs/Docker.md)
-
+- [Docker Resources](./framework/Docs/Docker.md)
+- [Selenium](https://selenium-python.readthedocs.io/)
+- [Selenium Resources](./framework/Docs/Selenium.md)
 
 <br>
 
@@ -41,7 +42,7 @@
 
 <br>
 
-## To Run Demo Tests Locally
+## To Run Demo Tests Locally - Requires Local Selenium Setup
 <hr>
 
 Required Parameters:
@@ -70,30 +71,41 @@ python ./run_functional_tests.py -e demo -p demo -t <filename> -k <functinoName 
 
 <br>
 
-## Run With Docker
+## Build pytest-framework image With Docker
 <hr>
 
-Build Docker:
+Build pytest-framework image using docker:
 ```
 docker build --rm -t pytest-framework ./
 ```
 
 
-Run Docker Selenium-Chrome container using name selenium:
+<br>
+
+## Run Demo tests with Docker Compose
+- script examples: 
+    - [build_docker.sh](./scripts/build_docker.sh)
+    - [run_compose.sh](./scripts/run_compose.sh)
+
+Build pytest-framework image using docker:
 ```
-docker run -d -p 0.0.0.0:4444:4444 -p 0.0.0.0:5900:5900 -v /dev/shm:/dev/shm --name selenium selenium/standalone-chrome-debug:latest
+docker build --rm -t pytest-framework ./
 ```
 
 
-Run docker container interactively while linking to named selenium container
+Run docker-compose.yml (firefox standalone selenium container):
 ```
-docker run -p 0.0.0.0:8675:8675 --link selenium:selenium -it --entrypoint /usr/bin/fish pytest-framework:latest
+cd ..
+# Build container network of multiple containers
+docker compose -f docker-compose.yml up
+
+# connect to pytest_framework terminal after container is started
+docker container exec -it pytest_framework zsh
 ```
 
-
-Share folder with host (execute from pytest_framework parent directory:)
+To run the demo tests via container:
 ```
-docker run -p 0.0.0.0:8675:8675 -it --entrypoint /usr/bin/fish --link selenium:selenium -v $(pwd):/pytest_framework pytest-framework:latest
+cd /pytest_framework
+python ./run_functional_tests.py -e demo -p demo
 ```
-
 <br>
