@@ -10,21 +10,57 @@
 # Start services detached (in background):
 #   docker-compose up -d
 # Run pytest_framework container in interactive mode:
-#   docker-compose exec -it pytest_framework zsh
+#   docker-compose exec pytest_framework zsh
 
 
-# https://github.com/SeleniumHQ/docker-selenium/tree/trunk?tab=readme-ov-file
+# # https://github.com/SeleniumHQ/docker-selenium/wiki/Getting-Started-with-Docker-Compose
 
 version: "3"
 
 services:
-  firefox:
-    image: selenium/standalone-firefox:4.24.0-20240830
+  chrome:
+    image: selenium/node-chrome:4.24.0-20240830
     shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    networks:
+      - custom_network
+
+  # edge:
+  #   image: selenium/node-edge:4.24.0-20240830
+  #   shm_size: 2gb
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #   networks:
+  #     - custom_network
+
+  firefox:
+    image: selenium/node-firefox:4.24.0-20240830
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    networks:
+      - custom_network
+
+  selenium-hub:
+    image: selenium/hub:4.24.0-20240830
+    container_name: selenium-hub
     ports:
+      - "4442:4442"
+      - "4443:4443"
       - "4444:4444"
-      - "4317:4317"
-      - "7900:7900"
     networks:
       - custom_network
 
@@ -32,7 +68,7 @@ services:
     image: pytest-framework:latest
     container_name: pytest_framework
     depends_on:
-      - firefox
+      - selenium-hub
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     ports:

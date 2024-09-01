@@ -18,6 +18,6 @@ requests
 urllib3
 beautifulsoup4
 mysql_connector_repackaged
-mysqlclient 
+mysqlclient
 mysql-connector
 python_dateutil

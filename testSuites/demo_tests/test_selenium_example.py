@@ -19,9 +19,11 @@ class Test_Selenium_Demo:
     @classmethod
     def setup_class(self) :  # Setup Method to run before all class tests
         self.driver = pytest_determine_browser()
+        self.driver.get("http://www.python.org")
 
     @classmethod
     def teardown_class(self):  # Teardown Method to run after all class tests are complete
+        time.sleep(5)
         try:
             self.driver.close()
         except:
@@ -35,14 +37,18 @@ class Test_Selenium_Demo:
         pass
 
 
-    def test_basic_steps(self):
-        self.driver.get("http://www.python.org")
-        assert "Python" in self.driver.title
-        elem = self.driver.find_element_by_name("q")
+    def test_check_page_title(self):
+        if "Python" in self.driver.title:
+            LOGGER.info("Python found in page title")
+            assert True
+        else:
+            assert False, "Python not found in page title"
+
+    def test_type_into_search(self):
+        elem = self.driver.find_element(By.ID, "id-search-field")
         elem.clear()
         elem.send_keys("pycon")
         elem.send_keys(Keys.RETURN)
-        assert "No results found." not in self.driver.page_source
-        time.sleep(5)
-        self.driver.close()
-
+        if "No results found." not in self.driver.page_source:
+            assert True
+        

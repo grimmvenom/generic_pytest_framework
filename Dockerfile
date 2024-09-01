@@ -1,4 +1,3 @@
-
 FROM ubuntu:latest
 
 # Open port for reporting dashboard
@@ -18,17 +17,18 @@ RUN apt-get update && \
     default-jre-headless libxml2 libpq-dev vim nano zsh net-tools wget curl dnsutils iputils-ping
 
 # Install packages and install additional tools / software
-RUN apt-get update && apt-get install -y apt-utils python3 python3-pip build-essential python-dev
+RUN apt-get update && apt-get install -y apt-utils python3 python3-pip build-essential 
+# python-dev
 # Install mySQL dependencies
 RUN apt-get -y install python3-mysqldb
 # Create Symbolic Link for python3 = python
 RUN ln -nsf /usr/bin/python3 /usr/bin/python
 # Install Python dependencies
-RUN python -m pip install -r /pytest_framework/requirements.txt
+RUN python -m pip install --break-system-packages -r /pytest_framework/requirements.txt
 
 # Install allure
-RUN curl -o allure-2.13.8.tgz -OLs https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.13.8/allure-commandline-2.13.8.tgz
-RUN tar -zxvf allure-2.13.8.tgz -C /opt/
-RUN ln -s /opt/allure-2.13.8/bin/allure /usr/bin/allure
+RUN curl -o allure-2.30.0.tgz -OLs https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.30.0/allure-commandline-2.30.0.tgz
+RUN tar -zxvf allure-2.30.0.tgz -C /opt/
+RUN ln -s /opt/allure-2.30.0/bin/allure /usr/bin/allure
 
 ENTRYPOINT ["zsh"]

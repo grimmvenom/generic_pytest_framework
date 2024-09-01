@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ..
-docker build --rm -t pytest-framework ./
+sudo docker build --rm -t pytest-framework ./
